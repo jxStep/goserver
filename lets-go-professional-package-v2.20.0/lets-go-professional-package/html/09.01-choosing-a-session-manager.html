@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="x-ua-compatible" content="ie=edge">
+		<meta name="author" content="Alex Edwards">
+		<meta name="copyright" content="Copyright Alex Edwards 2023">
+		<title>Choosing a session manager &mdash; Let's Go</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<link rel="stylesheet" type="text/css" href="assets/css/main.css">
+	</head>
+	<body>
+		<header>
+			<div class="wrapper">
+				<div>
+					
+						
+						<a href="00.00-front-matter.html">Let's Go</a> <span class="crumbs">&rsaquo; <a href="09.00-stateful-http.html">Stateful HTTP</a> &rsaquo; Choosing a session manager</span>
+						
+					
+				</div>
+				<div>
+					&lsaquo; <a href="09.00-stateful-http.html">Previous</a>
+					&middot; <a href="00.01-contents.html">Contents</a> &middot;
+					<a href="09.02-setting-up-the-session-manager.html">Next</a> &rsaquo;
+				</div>
+			</div>
+		</header>
+		<main class="wrapper text">
+			<div class="chapter">Chapter 9.1.</div>
+			<h2 id="choosing-a-session-manager">Choosing a session manager</h2>
+
+<p>There are a lot of <a href="https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html">security considerations</a> when it comes to working with sessions, and proper implementation is not trivial. Unless you really need to roll your own implementation, it&rsquo;s a good idea to use an existing, well-tested, third-party package here.</p>
+
+<p>Until recently <a href="https://github.com/gorilla/sessions"><code>gorilla/sessions</code></a> was a very popular option for this. Unfortunately it&rsquo;s no longer maintained and is in archive mode on GitHub, meaning that any bugs in the package &mdash; including security bugs &mdash; will not be fixed.</p>
+
+<p>So for most applications I now recommend using <a href="https://github.com/alexedwards/scs"><code>alexedwards/scs</code></a>. It has a fairly simple API, supports automatic loading and saving of session data via middleware, and lets you store session data server-side in variety of databases (including MySQL, PostgreSQL and Redis).</p>
+
+<p>For this project we&rsquo;ve already got a MySQL database set up, so we&rsquo;ll opt to use <code>alexedwards/scs</code> and store the session data in MySQL.</p>
+
+<p>If you&rsquo;re following along, make sure that you&rsquo;re in your project directory and install the necessary packages like so:</p>
+
+<figure class="code bash">
+<pre>$ go get github.com/alexedwards/scs/v2@v2
+<samp>go: downloading github.com/alexedwards/scs/v2 v2.5.0
+go get: added github.com/alexedwards/scs/v2 v2.5.0</samp>
+
+$ go get github.com/alexedwards/scs/mysqlstore@latest
+<samp>go: downloading github.com/alexedwards/scs/mysqlstore v0.0.0-20230217120314-6b1bedc0f08c
+go get: added github.com/alexedwards/scs/mysqlstore v0.0.0-20230217120314-6b1bedc0f08c</samp></pre>
+</figure>
+
+			
+		</main>
+		<footer>
+			<div class="wrapper">
+				<div>
+					&lsaquo; <a href="09.00-stateful-http.html">Previous</a>
+				</div>
+				<div>
+					<a href="00.01-contents.html">Contents</a>
+				</div>
+				<div>
+					<a href="09.02-setting-up-the-session-manager.html">Next</a> &rsaquo;
+				</div>
+			</div>
+		</footer>
+	</body>
+</html>
