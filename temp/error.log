@@ -1,0 +1,3 @@
+exit status 0xc000013a
+43 C:/Users/Step/Projekte/goserver/cmd/web/main.go:46: listen tcp :4000: bind: Only one usage of each socket address (protocol/network address/port) is normally permitted.
+exit status 1

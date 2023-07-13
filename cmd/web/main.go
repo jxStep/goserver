@@ -5,12 +5,35 @@ import (
 	"log"
 	"net/http"
 	"path/filepath"
+	"os"
 )
+
+type application struct {
+	errorLog *log.Logger
+	infoLog  *log.Logger
+}
 
 func main() {
 	// Definieren der Standard-Adresse für den HTTP-Server
 	addr := flag.String("addr", ":4000", "HTTP network address")
 	flag.Parse()
+
+    // Use log.New() to create a logger for writing information messages. This takes
+    // three parameters: the destination to write the logs to (os.Stdout), a string
+    // prefix for message (INFO followed by a tab), and flags to indicate what
+    // additional information to include (local date and time). Note that the flags
+    // are joined using the bitwise OR operator |.
+    infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
+
+    // Create a logger for writing error messages in the same way, but use stderr as
+    // the destination and use the log.Lshortfile flag to include the relevant
+    // file name and line number.
+    errorLog := log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Llongfile)
+
+	app := &application{
+		errorLog: errorLog,
+		infoLog: infoLog,
+	}
 
 	// Erzeugen eines neuen HTTP Request Multiplexers
 	mux := http.NewServeMux()
@@ -23,14 +46,20 @@ func main() {
 	mux.Handle("/static/", http.StripPrefix("/static", fileServer))
 
 	// Festlegen der Handlerfunktionen für die jeweiligen Pfade
-	mux.HandleFunc("/", home)
-	mux.HandleFunc("/snippet/view", snippetView)
-	mux.HandleFunc("/snippet/create", snippetCreate)
+	mux.HandleFunc("/", app.home)
+	mux.HandleFunc("/snippet/view", app.snippetView)
+	mux.HandleFunc("/snippet/create", app.snippetCreate)
+
+	srv := &http.Server{
+		Addr:     *addr,
+		ErrorLog: errorLog,
+		Handler:  mux,
+	}
 
 	// Starten des Servers und Ausgeben einer Fehlermeldung, wenn der Server nicht gestartet werden kann
-	log.Printf("Starting Server on %s", *addr)
-	err := http.ListenAndServe(*addr, mux)
-	log.Fatal(err)
+	infoLog.Printf("Starting Server on %s", *addr)
+	err := srv.ListenAndServe()
+	errorLog.Fatal(err)
 }
 
 // Definieren einer neuen Dateisystemstruktur, die das Standard-HTTP-Dateisystem umschließt

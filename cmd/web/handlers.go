@@ -3,13 +3,12 @@ package main
 import (
 	"fmt"
 	"html/template"
-	"log"
 	"net/http"
 	"strconv"
 )
 
 // Home-Handler zum Bedienen der Startseite
-func home(w http.ResponseWriter, r *http.Request) {
+func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	// Überprüfen, ob der angeforderte Pfad genau "/" ist, 
 	// wenn nicht, sendet die Funktion eine 404 Not Found Antwort an den Benutzer.
 	if r.URL.Path != "/" {
@@ -28,7 +27,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 	ts, err := template.ParseFiles(files...)
 	// Wenn ein Fehler beim Parsen auftritt, logge den Fehler und sende eine HTTP 500 Antwort.
 	if err != nil {
-		log.Print(err.Error())
+		app.errorLog.Print(err.Error())
 		http.Error(w, "Internal Server Error", 500)
 		return
 	}
@@ -36,13 +35,13 @@ func home(w http.ResponseWriter, r *http.Request) {
 	// Ausführen des Templates, Fehlerbehandlung ähnlich wie beim Parsen
 	err = ts.ExecuteTemplate(w, "base", nil)
 	if err != nil {
-		log.Print(err.Error())
+		app.errorLog.Print(err.Error())
 		http.Error(w, "Internal Server Error", 500)
 	}
 }
 
 // snippetView-Handler zum Anzeigen eines bestimmten Snippets
-func snippetView(w http.ResponseWriter, r *http.Request) {
+func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
 	// Extrahieren des Snippet-ID Parameters aus dem URL Query String,
 	// bei einem Fehler oder wenn die ID kleiner als 1 ist, wird eine 404 Not Found Antwort gesendet.
 	id, err := strconv.Atoi(r.URL.Query().Get("id"))
@@ -56,7 +55,7 @@ func snippetView(w http.ResponseWriter, r *http.Request) {
 }
 
 // snippetCreate-Handler zum Erstellen eines neuen Snippets
-func snippetCreate(w http.ResponseWriter, r *http.Request){
+func (app *application) snippetCreate(w http.ResponseWriter, r *http.Request){
 	// Überprüfen ob die Anfrage die Methode POST hat, wenn nicht, senden wir einen '405 Method Not Allowed' Status 
 	// und setzen den 'Allow'-Header auf 'POST'
 	if r.Method != http.MethodPost {
